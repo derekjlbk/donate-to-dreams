@@ -1,7 +1,4 @@
 import React, { Component } from 'react'
-import csv from 'fast-csv'
-import Papa from 'papaparse'
-import fs from "fs"
 import firebase from 'firebase'
 import bidderData from './bidder-data.json'
 import './bootstrap.css'
@@ -12,7 +9,8 @@ class App extends Component {
     super(props)
 
     this.state = {
-      bidders: []
+      bidders: [],
+      total: 0
     }
 
     var config = {
@@ -33,6 +31,7 @@ class App extends Component {
     this.updateBidderData = this.updateBidderData.bind(this)
     this.renderBidderTable = this.renderBidderTable.bind(this)
     this.placeNewBid = this.placeNewBid.bind(this)
+    this.exportToCsvFile = this.exportToCsvFile.bind(this)
 
     firebase.database().ref("bidders").on("value", this.updateBidderData)
   }
@@ -42,12 +41,17 @@ class App extends Component {
     var bidderJSON = snapshot.val()
     var bidderARR = []
 
+    var total = 0
+
     for (var key in bidderJSON) {
-      bidderARR.push(bidderJSON[key])
+      const bidder = bidderJSON[key]
+      total = total + Number(bidder["Donate to Dreams"])
+      bidderARR.push(bidder)
     }
 
     this.setState({
-      bidders: bidderARR
+      bidders: bidderARR,
+      total: total
     })
     console.log("Bidder data update complete")
   }
@@ -81,10 +85,61 @@ class App extends Component {
 
   exportBtnClicked() {
     console.log("Export Button Clicked")
+
+    firebase.database().ref("bidders").once("value")
+    .then((snapshot) => {
+      const data = snapshot.val()
+    
+      let bidderData = {}
+
+      for (var key in data) {
+        const bidder = data[key]
+
+        bidderData[key] = {
+          Number: key,
+          Name: bidder["Name"],
+          Amount: bidder["Donate to Dreams"]
+        }
+      }
+
+      //this.exportToCsvFile("bidder-data.csv", bidderData)
+      let csvStr = "Paddle ID,Name,Amount\n"
+      for (key in bidderData) {
+        let row = bidderData[key]
+        csvStr += row.Number + "," + row.Name + "," + row.Amount + "\n"
+      }
+      this.exportToCsvFile("donate-to-dreams-summary.csv", csvStr)
+    })
+    
+    firebase.database().ref("bids").once("value")
+    .then((snapshot) => {
+      const bidData = snapshot.val()
+      let csvStr = "Time,Bid Number,Name,Amount\n"
+
+      for (var key in bidData) {
+        let row = bidData[key]
+        csvStr += row["time"] + "," + row["number"] + "," + row["name"] + "," + row["amount"] + "\n"
+      }
+      
+      this.exportToCsvFile("donate-to-dreams-data.csv", csvStr)
+    })
+    
+  }
+
+  exportToCsvFile(filename, csvStr) {
+    let dataUri = 'data:text/csv;charset=utf-8,'+ csvStr;
+    
+    let exportFileDefaultName = filename;
+    
+    let linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
   }
 
   renderBidderTable() {
     console.log("Rendering the bidder table")
+
     return this.state.bidders.map((bidder) => {
       return <tr key={"bidder-" + bidder["Paddle ID"]}>
         <td>{bidder["Paddle ID"]}</td>
@@ -112,7 +167,7 @@ class App extends Component {
       }
     }
 
-    if (Object.entries(bidder).length == 0) {
+    if (Object.entries(bidder).length === 0) {
       console.error("Bidder Number not found")
       alert("Bid number " + bidNumber + " was not found.")
       return
@@ -131,10 +186,13 @@ class App extends Component {
 
       bidderData["Donate to Dreams"] = newAmount
 
+
       return firebase.database().ref("bidders/" + bidNumber).set(bidderData)
     })
     .then(() => {
       let bid = {
+        time: new Date().toLocaleTimeString(),
+        number: bidderData["Paddle ID"],
         name: bidderData["Name"],
         amount: amount
       }
@@ -158,6 +216,9 @@ class App extends Component {
           </li>
           <li className="nav-item">
             <button className="btn btn-link" onClick={this.exportBtnClicked}>Export Data File</button>
+          </li>
+          <li className="nav-item">
+            <p className=" btn btn-link"><strong>Total Gift: ${this.state.total}</strong></p>
           </li>
         </ul>
         <hr />
