@@ -2,6 +2,26 @@ import React, { Component } from 'react';
 import './bootstrap.css';
 
 class App extends Component {
+  constructor(props) {
+    super(props)
+
+    // Bind the custom methods
+    this.launchBtnClicked = this.launchBtnClicked.bind(this)
+    this.importBtnClicked = this.importBtnClicked.bind(this)
+    this.exportBtnClicked = this.exportBtnClicked.bind(this)
+  }
+
+  launchBtnClicked() {
+    console.log("Launch Button Clicked")
+  }
+
+  importBtnClicked() {
+    console.log("Import Button Clicked")
+  }
+
+  exportBtnClicked() {
+    console.log("Export Button Clicked")
+  }
 
   render() {
     return (
@@ -9,13 +29,13 @@ class App extends Component {
         <h1>Donate to Dreams</h1>
         <ul className="nav">
           <li className="nav-item">
-            <button className="btn btn-link">Launch Display</button>
+            <button className="btn btn-link" onClick={this.launchBtnClicked}>Launch Display</button>
           </li>
           <li className="nav-item">
-            <button className="btn btn-link">Import Data File</button>
+            <button className="btn btn-link" onClick={this.importBtnClicked}>Import Data File</button>
           </li>
           <li className="nav-item">
-            <button className="btn btn-link">Export Data File</button>
+            <button className="btn btn-link" onClick={this.exportBtnClicked}>Export Data File</button>
           </li>
         </ul>
         <hr />
