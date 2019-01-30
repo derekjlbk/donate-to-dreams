@@ -9,13 +9,13 @@ class App extends Component {
         <h1>Donate to Dreams</h1>
         <ul className="nav">
           <li className="nav-item">
-            <a href="#" className="nav-link">Launch Display</a>
+            <button className="btn btn-link">Launch Display</button>
           </li>
           <li className="nav-item">
-            <a href="#" className="nav-link">Import Data File</a>
+            <button className="btn btn-link">Import Data File</button>
           </li>
           <li className="nav-item">
-            <a href="#" className="nav-link">Export Data File</a>
+            <button className="btn btn-link">Export Data File</button>
           </li>
         </ul>
         <hr />
