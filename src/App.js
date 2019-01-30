@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import csv from 'fast-csv'
 import Papa from 'papaparse'
 import fs from "fs"
+import firebase from 'firebase'
 import bidderData from './bidder-data.json'
 import './bootstrap.css'
 
@@ -10,10 +11,44 @@ class App extends Component {
   constructor(props) {
     super(props)
 
+    this.state = {
+      bidders: []
+    }
+
+    var config = {
+      apiKey: "AIzaSyDljWk2kKlAEYrq-qb2hf5sFFSDHqGcMKQ",
+      authDomain: "donate-to-dreams.firebaseapp.com",
+      databaseURL: "https://donate-to-dreams.firebaseio.com",
+      projectId: "donate-to-dreams",
+      storageBucket: "donate-to-dreams.appspot.com",
+      messagingSenderId: "744299511690"
+    };
+
+    firebase.initializeApp(config)
+
     // Bind the custom methods
     this.launchBtnClicked = this.launchBtnClicked.bind(this)
     this.importBtnClicked = this.importBtnClicked.bind(this)
     this.exportBtnClicked = this.exportBtnClicked.bind(this)
+    this.updateBidderData = this.updateBidderData.bind(this)
+    this.renderBidderTable = this.renderBidderTable.bind(this)
+
+    firebase.database().ref("bidders").on("value", this.updateBidderData)
+  }
+
+  updateBidderData(snapshot) {
+    console.log("Updating bidder data")
+    var bidderJSON = snapshot.val()
+    var bidderARR = []
+
+    for (var key in bidderJSON) {
+      bidderARR.push(bidderJSON[key])
+    }
+
+    this.setState({
+      bidders: bidderARR
+    })
+    console.log("Bidder data update complete")
   }
 
   launchBtnClicked() {
@@ -22,28 +57,41 @@ class App extends Component {
 
   importBtnClicked() {
     console.log("Import Button Clicked")
-    console.log(bidderData)
-    /*
-    var stream = fs.createReadStream("bidder-data.csv")
-    console.log("stream created")
-    var csvStream = csv()
-      .on("data", (data) => {
-        const dataJSON = Papa.parse(data)
-        console.log(dataJSON)
-      })
-      .on("end", () => {
-        console.log("Import Complete")
-      })
+     
+    var modBidData = {}
 
-    //const data = Papa.parse("bidder-data.csv")
-    //console.log(data)
+    // Reorganize the data by bid number and add a field for
+    for (var key in bidderData) {
+      let bidder = bidderData[key]
+      let bidNumber = bidder["Alias"].split("#")[1]
 
-    stream.pipe(csvStream)
-    */
+      bidder.Name = key
+      bidder["Donate to Dreams"] = "0"
+
+      modBidData[bidNumber] = bidder
+    }
+
+    firebase.database().ref("bidders").set(modBidData)
+    .then(() => {
+      console.log("Import Complete")
+    })
+    
   }
 
   exportBtnClicked() {
     console.log("Export Button Clicked")
+  }
+
+  renderBidderTable() {
+    console.log("Rendering the bidder table")
+    return this.state.bidders.map((bidder) => {
+      return <tr key={"bidder-" + bidder["Paddle ID"]}>
+        <td>{bidder["Paddle ID"]}</td>
+        <td>{bidder["Name"]}</td>
+        <td>{bidder["Donate to Dreams"]}</td>
+        <td><button className="btn btn-link">Edit</button></td>
+      </tr>
+    })
   }
 
   render() {
@@ -88,11 +136,13 @@ class App extends Component {
               <tr>
                 <th>Bid Number</th>
                 <th>Name</th>
-                <th>Display Name</th>
                 <th>Gift Amount</th>
                 <th>...</th>
               </tr>
             </thead>
+            <tbody>
+              {this.renderBidderTable() }
+            </tbody>
           </table>
         </main>
       </div>
