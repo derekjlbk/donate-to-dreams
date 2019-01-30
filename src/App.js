@@ -1,5 +1,10 @@
-import React, { Component } from 'react';
-import './bootstrap.css';
+import React, { Component } from 'react'
+import csv from 'fast-csv'
+import Papa from 'papaparse'
+import fs from "fs"
+import bidderData from './bidder-data.json'
+import './bootstrap.css'
+
 
 class App extends Component {
   constructor(props) {
@@ -17,6 +22,24 @@ class App extends Component {
 
   importBtnClicked() {
     console.log("Import Button Clicked")
+    console.log(bidderData)
+    /*
+    var stream = fs.createReadStream("bidder-data.csv")
+    console.log("stream created")
+    var csvStream = csv()
+      .on("data", (data) => {
+        const dataJSON = Papa.parse(data)
+        console.log(dataJSON)
+      })
+      .on("end", () => {
+        console.log("Import Complete")
+      })
+
+    //const data = Papa.parse("bidder-data.csv")
+    //console.log(data)
+
+    stream.pipe(csvStream)
+    */
   }
 
   exportBtnClicked() {
