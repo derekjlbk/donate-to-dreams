@@ -58,6 +58,7 @@ class App extends Component {
 
   launchBtnClicked() {
     console.log("Launch Button Clicked")
+    window.open("/display.html",'window','directories=no,titlebar=no,toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=no,width=400,height=350')
   }
 
   importBtnClicked() {
