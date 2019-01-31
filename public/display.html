@@ -22,52 +22,80 @@
             }
 
             #bidder-1 {
+                height: 70px;
                 font-size: 3.5em;
             }
             #bidder-2 {
+                height: 50px;
                 font-size: 2.5em;
                 opacity: 0.8;
             }
             #bidder-3 {
+                height: 40px;
                 font-size: 2.0em;
                 opacity: 0.6;
             }
             #bidder-4 {
+                height:30px;
                 font-size: 1.5em;
                 opacity: 0.4;
             }
             #bidder-5 {
+                height: 25px;
                 font-size: 1.25em;
                 opacity: 0.2;
+            }
+
+            .fade {
+                background-color: black;
+            }
+
+            .modal-content {
+                margin-top: 40%;
+                background-color: rgba(0, 0, 0, 0);
+                color: white;
+                border: none;
             }
         </style>
     </head>
     <body onload="displayDriver()">
         <div class="container-fluid">
             <div class="row">
-                <h1>Donate to Dreams</h1>
+                <h1 style="margin-left: 12px; margin-bottom: 8px;">Donate to Dreams</h1>
             </div>
             <div style="height: 400px;" class="row">
                 <div class="col-md-3" >
-                    <h4 class="text-center">Goal: $50,000</h4>
+                    <h4 class="text-center">Goal: <span id="goal-amount">$</span></h4>
                     <div class="progress-bar-empty">
                         <div class="progress-bar-fill"></div>
                     </div>
-                    <h4 class="text-center">$25,000</h4>
+                    <h4 id="total-ui" class="text-center">$0</h4>
                 </div>
                 <div class="col-md-8 text-center" >
                     <div class="bidder-names">
-                        <h5 id="bidder-5"><span id="bidder-amount-5">$1,000</span> <span id="bidder-name-5">Derek Johnston</span></h5>
-                        <h4 id="bidder-4"><span id="bidder-amount-4">$1,000</span> <span id="bidder-name-4">Derek Johnston</span></h4>
-                        <h3 id="bidder-3"><span id="bidder-amount-5">$1,000</span> <span id="bidder-name-4">Derek Johnston</span></h3>
-                        <h2 id="bidder-2"><span id="bidder-amount-5">$1,000</span> <span id="bidder-name-4">Derek Johnston</span></h2>
-                        <h1 id="bidder-1"><span id="bidder-amount-5">$1,000</span> <span id="bidder-name-4">Derek Johnston</span></h1>
+                        <h5 id="bidder-5"><span id="bidder-amount-5"></span> <span id="bidder-name-5"></span></h5>
+                        <h4 id="bidder-4"><span id="bidder-amount-4"></span> <span id="bidder-name-4"></span></h4>
+                        <h3 id="bidder-3"><span id="bidder-amount-3"></span> <span id="bidder-name-3"></span></h3>
+                        <h2 id="bidder-2"><span id="bidder-amount-2"></span> <span id="bidder-name-2"></span></h2>
+                        <h1 id="bidder-1"><span id="bidder-amount-1"></span> <span id="bidder-name-1"></span></h1>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col">
-                    <h3 class="text-right">Communities in Schools</h3>
+                    <h3 style="margin-right: 12px;" class="text-right">Communities in Schools</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Name Display Modal -->
+        <div class="modal fade" id="display-modal" tabindex="-1" role="dialog" aria-labelledby="display-name-modal" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <h1 id="display-name" class="text-center">Derek Johnston</h1>
+                        <h3 id="display-amount" class="text-center">$1,000</h3>
+                    </div>
                 </div>
             </div>
         </div>
@@ -76,7 +104,6 @@
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
-        
         <script src="https://www.gstatic.com/firebasejs/5.8.1/firebase.js"></script>
         <script>
             // Initialize Firebase

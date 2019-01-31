@@ -96,6 +96,10 @@ class App extends Component {
       for (var key in data) {
         const bidder = data[key]
 
+        if (bidder["Donate to Dreams"] == "0") {
+          continue
+        }
+
         bidderData[key] = {
           Number: key,
           Name: bidder["Name"],
